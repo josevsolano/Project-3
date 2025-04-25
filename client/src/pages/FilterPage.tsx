@@ -7,7 +7,7 @@ export default function FilterPage() {
     <div className="container">
       <section className="filter-hero">
         <div className="filter-cta">
-          <h1>"Select Tutor to Trade with.”</h1>
+          <h1>"Select Tutor to trade Knowledge with.”</h1>
         </div>
       </section>
       {/* … */}
