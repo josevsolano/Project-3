@@ -1,0 +1,34 @@
+/* reset, typography, & common utilities */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body, #root {
+    height: 100%;
+    font-family: sans-serif;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* layout helpers */
+  .container {
+    width: min(90%, 1200px);
+    margin: 0 auto;
+  }
+  
+  .flex {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .grid {
+    display: grid;
+    gap: 1rem;
+  }
+  

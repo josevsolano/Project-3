@@ -1,0 +1,15 @@
+.landing-hero {
+    background: url('../assets/hero.jpg') center/cover no-repeat;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .landing-cta {
+    padding: 2rem;
+    background: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
