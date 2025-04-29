@@ -11,11 +11,7 @@ app.use('/api/contact', contactRoutes);
 // Serve static files (if needed for frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
-require('dotenv').config();
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
