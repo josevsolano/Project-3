@@ -1,13 +1,13 @@
 import express from 'express';
-import { validateContactForm } from '../middleware/validateContactForm';
-import { submitContactForm } from '../controllers/contactController';
+import { validateContactForm } from '../middleware/validation';
+import { submitContactForm } from '../controllers/contactsController';
 
 const router = express.Router();
 
 // POST route for handling contact form submissions
 router.post('/submit', submitContactForm);
 
-export default router;
+// Removed duplicate export default statement
 
 // Route to handle GET requests to the contact page
 router.get('/', (req, res) => {

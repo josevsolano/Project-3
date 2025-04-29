@@ -20,6 +20,7 @@ const LandingPage: React.FC = () => {
       } catch (error) {
         console.error('Error fetching message:', error);
       }
+      
     };
 
     fetchMessage();

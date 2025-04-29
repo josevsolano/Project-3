@@ -14,3 +14,7 @@ export const getLandingPageData = (req: Request, res: Response): void => {
     res.status(500).json({ message: 'Error fetching data', error: error.message });
   }
 };
+
+export const landingPage = () => {
+    // Implementation of landingPage
+};
