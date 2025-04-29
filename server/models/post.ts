@@ -46,3 +46,20 @@ const postSchema = new mongoose.Schema({
  { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);
+
+import { Schema, Document } from 'mongoose';
+
+export interface IPost extends Document {
+  title: string;
+  content: string;
+  userId: mongoose.Types.ObjectId;
+}
+
+const PostSchema: Schema = new mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+});
+
+const PostModel = mongoose.model('Post', PostSchema) as mongoose.Model<IPost>;
+export default PostModel;

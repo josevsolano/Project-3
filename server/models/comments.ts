@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema } from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
   content: {
@@ -49,3 +49,23 @@ const commentSchema = new mongoose.Schema({
  { timestamps: true });
 
 module.exports = mongoose.model('Comment', commentSchema);
+
+// Removed duplicate import of mongoose
+
+export interface IComment extends Document {
+  content: string;
+  postId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+}
+
+const CommentSchema: Schema = new Schema(
+  {
+    content: { type: String, required: true },
+    postId: { type: mongoose.Types.ObjectId, ref: 'Post', required: true },
+    userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+  },
+  { timestamps: true }
+);
+
+const Comment = mongoose.model<IComment>('Comment', CommentSchema);
+export default Comment;

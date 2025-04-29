@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 // Ensure the correct path to the Comment model
-import Comment from '../models/comments.ts';
-import Post from '../models/posts.ts'; // Assuming you have a Post model to validate postId
-import User from '../models/user.ts'; // Assuming you have a User model to validate userId
+import Comment from '../models/comments';
+import Post from '../models/post'; // Assuming you have a Post model to validate postId
+import User from '../models/user'; // Assuming you have a User model to validate userId
 
 // Create a comment
 export const createComment = async (req: Request, res: Response): Promise<void> => {
