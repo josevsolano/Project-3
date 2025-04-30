@@ -1,15 +1,177 @@
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  color: #333;
+  background-color: #fdfdfd;
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .landing-hero {
-    background: url('../assets/hero.jpg') center/cover no-repeat;
-    height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.landing-cta h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.landing-cta button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #4e79a7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.landing-cta button:hover {
+  background-color: #3b5f87;
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+section h2, section h3 {
+  color: #2b3e50;
+  margin-bottom: 0.75rem;
+}
+
+section p, section ul {
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+ul {
+  list-style: disc inside;
+  margin-left: 1rem;
+}
+
+.auth-form {
+  background-color: #ffffff;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.auth-form input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.auth-form button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #2e8b57;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-form button:hover {
+  background-color: #256d45;
+}
+
+.auth-form h3 {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.auth-form a {
+  color: #2e8b57;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-form a:hover {
+  text-decoration: underline;
+}
+
+.form-message {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.form-message.success {
+  background-color: #e0f7ec;
+  color: #237a57;
+  border: 1px solid #b2dfdb;
+}
+
+.form-message.error {
+  background-color: #fbeaea;
+  color: #a33a3a;
+  border: 1px solid #f5c6cb;
+}
+
+@keyframes bounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.bounce {
+  animation: bounce 0.8s ease;
+}
+
+@media (max-width: 600px) {
+  .landing-cta h1 {
+    font-size: 1.5rem;
   }
-  
-  .landing-cta {
-    padding: 2rem;
-    background: rgba(255,255,255,0.8);
-    border-radius: 8px;
-    text-align: center;
+
+  .landing-cta button {
+    width: 100%;
   }
-  
+
+  .auth-form {
+    padding: 1.5rem;
+  }
+
+  .auth-form input,
+  .auth-form button {
+    font-size: 1rem;
+  }
+}
