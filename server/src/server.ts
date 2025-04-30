@@ -1,9 +1,10 @@
 import express from 'express';
 import path from 'path';
-import contactRoutes from './routes/contactPage.js';
+import contactRoutes from './routes++/contactPage.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+// import apollo server and graphql
 
 // Contact routes
 app.use('/api/contact', contactRoutes);
