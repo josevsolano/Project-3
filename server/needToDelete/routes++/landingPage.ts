@@ -13,7 +13,7 @@ const router = express.Router();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-import { authenticateUser } from '../middleware/auth';
+import { authenticateUser } from '../middleware/auth.js';
 
 app.get('/api/landingpage', authenticateUser, (req, res) => {
     // Serve the landing page HTML file
