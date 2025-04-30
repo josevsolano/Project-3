@@ -63,10 +63,42 @@ const typeDefs = gql`
     login(email: String!, password: String!): String!                 # User login, returns a JWT token
   }
 
-  
-`;
+  type Post {
+    id: ID!
+    name: String!
+    description: String!
+}
+    
+    createdAt: String!
+  }
 
-export default typeDefs;
+  type Query {
+    getAllPosts: [Post!]!            # Fetch all posts
+    getPostById(id: ID!): Post       # Fetch a post by ID
+  }
+
+  type Mutation {
+    createPost(name: String!, description: String!): Post!          # Create a new post
+    deletePost(id: ID!): Post!                                       # Delete a post by ID
+  }
+
+  type Comment {
+    id: ID!
+    postId: ID!
+    content: String!
+    createdAt: String!
+    }
+
+  type Contact {
+    id: ID!
+    name: String!
+    email: String!
+    message: String!
+  }
+
+type Mutation {
+    signUp(username: String!, email: String!, password: String!): Auth
+}
 `;
 
 export default typeDefs;
