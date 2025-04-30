@@ -1,20 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-
 import '../styles/globals.css';
 import '../styles/landing.css';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { gql, useQuery, useMutation } from '@apollo/client';
+import { useAuth } from '../hooks/useAuth';
 
-const LandingPage: React.FC = () => {
+const GET_SPLASH = gql`
+  query GetSplash {
+    landingPage {
+      message
+    }
+  }
+`;
+
+const LOGIN = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+    }
+  }
+`;
+
+export default function LandingPage() {
   const navigate = useNavigate();
   const { loggedIn, setToken } = useAuth();
 
-  const [landingMessage, setLandingMessage] = useState<string>('');
+  const { data: splashData, loading: splashLoading } = useQuery(GET_SPLASH);
+  const [login, { loading: loggingIn, error: loginError }] = useMutation(LOGIN);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginMessage, setLoginMessage] = useState('');
-  const [loginType, setLoginType] = useState<'success' | 'error' | ''>('');
+  const [loginMsg, setLoginMsg] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
 
   useEffect(() => {
     if (loggedIn) {
@@ -22,22 +38,15 @@ const LandingPage: React.FC = () => {
     }
   }, [loggedIn, navigate]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch('/api/landingpage');
-        if (!res.ok) throw new Error('Network error');
-        const data = await res.json();
-        setLandingMessage(data.message);
-      } catch (err) {
-        console.error('Error fetching landing message:', err);
-      }
-    })();
-  }, []);
+  if (splashLoading) {
+    return <p className="container">Loading…</p>;
+  }
+
+  const splashMessage = splashData?.landingPage.message || '“We all gain knowledge from each other.”';
 
   const handleScrollToForm = () => {
     const el = document.getElementById('auth-form');
-    if (!el) return console.warn('Auth form not found');
+    if (!el) return;
     el.scrollIntoView({ behavior: 'smooth' });
     el.classList.add('bounce');
     setTimeout(() => el.classList.remove('bounce'), 800);
@@ -45,37 +54,24 @@ const LandingPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoginMessage('');
-    setLoginType('');
+    setLoginMsg({ text: '', type: '' });
 
     if (!email || !password) {
-      setLoginMessage('❌ Please enter both email and password.');
-      setLoginType('error');
+      setLoginMsg({ text: '❌ Please enter both email and password.', type: 'error' });
       return;
     }
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
+      const { data } = await login({ variables: { email, password } });
+      const token = data.login.token;
+      localStorage.setItem('token', token);
+      setToken(token);
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      localStorage.setItem('token', data.token);
-      setToken(data.token);
-      setLoginMessage('✅ Sign-in successful! Redirecting…');
-      setLoginType('success');
-
+      setLoginMsg({ text: '✅ Sign-in successful! Redirecting…', type: 'success' });
       setTimeout(() => navigate('/filter'), 800);
     } catch (err: any) {
-      console.error('Login error:', err);
-      setLoginMessage(`❌ ${err.message}`);
-      setLoginType('error');
+      console.error(err);
+      setLoginMsg({ text: `❌ ${err.message}`, type: 'error' });
     }
   };
 
@@ -83,17 +79,17 @@ const LandingPage: React.FC = () => {
     <div className="container">
       <section className="landing-hero fade-in">
         <div className="landing-cta">
-          <h1>{landingMessage || '“We all gain knowledge from each other.”'}</h1>
+          <h1>{splashMessage}</h1>
           <button onClick={handleScrollToForm}>Get Started</button>
         </div>
       </section>
 
+      {/* Mission & Impact sections (unchanged) */}
       <section className="mission fade-in">
         <h2>Welcome to <em>Tutor Trader</em></h2>
         <p>
-          At <em>Tutor Trader</em>, we believe that every student has both knowledge to share
-          and room to grow. Our platform connects learners from all backgrounds, empowering
-          them to teach, learn, and build confidence together...
+          At <em>Tutor Trader</em>, we believe that every student has both knowledge to share and room to grow.
+          Our platform connects learners from all backgrounds, empowering them to teach, learn, and build confidence together...
         </p>
       </section>
 
@@ -103,12 +99,10 @@ const LandingPage: React.FC = () => {
           <li>High-impact tutoring is 20× more effective for math and 15× for reading.</li>
           <li>Students using tutoring services saw a 7% higher success rate. – SBVC</li>
         </ul>
-
         <h3>Interpersonal Relationships & Academic Success</h3>
         <ul>
           <li>Strong peer relationships boost grades and well-being. – PMC, ERIC</li>
         </ul>
-
         <h3>Collaboration & Career Development</h3>
         <ul>
           <li>Peer tutoring fosters empathy, communication, and teamwork.</li>
@@ -119,9 +113,14 @@ const LandingPage: React.FC = () => {
       <section id="auth-form" className="auth-form fade-in">
         <h2>Join the Community of Fellow Students</h2>
 
-        {loginMessage && (
-          <div className={`form-message ${loginType}`}>
-            {loginMessage}
+        {loginMsg.text && (
+          <div className={`form-message ${loginMsg.type}`}>
+            {loginMsg.text}
+          </div>
+        )}
+        {loginError && (
+          <div className="form-message error">
+            {loginError.message}
           </div>
         )}
 
@@ -130,23 +129,25 @@ const LandingPage: React.FC = () => {
           <input
             id="login-email"
             type="email"
-            placeholder="Email"
-            required
             value={email}
             onChange={e => setEmail(e.target.value)}
+            disabled={loggingIn}
+            required
           />
 
           <label htmlFor="login-password">Password</label>
           <input
             id="login-password"
             type="password"
-            placeholder="Password"
-            required
             value={password}
             onChange={e => setPassword(e.target.value)}
+            disabled={loggingIn}
+            required
           />
 
-          <button type="submit">Sign In</button>
+          <button type="submit" disabled={loggingIn}>
+            {loggingIn ? 'Signing In…' : 'Sign In'}
+          </button>
         </form>
 
         <h3>
@@ -155,6 +156,4 @@ const LandingPage: React.FC = () => {
       </section>
     </div>
   );
-};
-
-export default LandingPage;
+}

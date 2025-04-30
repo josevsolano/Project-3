@@ -1,109 +1,78 @@
 import '../styles/globals.css';
 import '../styles/contact.css';
-
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuth } from '../hooks/useAuth';
 
-interface Match {
-  _id: string;
-  requesterId: { email: string };
-  subject?: string;
-  proposedTime?: string;
-  status: 'pending' | 'accepted' | 'declined' | 'completed' | 'archived';
-  createdAt: string;
-}
+const GET_MESSAGES = gql`
+  query GetMessages {
+    messages {
+      _id
+      subject
+      proposedTime
+      status
+      createdAt
+      requester {
+        email
+      }
+    }
+  }
+`;
+
+const ACCEPT = gql`mutation Accept($id: ID!) { accept(id: $id) { _id status } }`;
+const DECLINE = gql`mutation Decline($id: ID!) { decline(id: $id) { _id status } }`;
+const ARCHIVE = gql`mutation Archive($id: ID!) { archive(id: $id) { _id status } }`;
 
 export default function ContactPage() {
   const { token } = useAuth();
-  const [activeTab, setActiveTab] = useState<'inbox' | 'scheduled' | 'past'>('inbox');
-  const [inbox, setInbox] = useState<Match[]>([]);
-  const [scheduled, setScheduled] = useState<Match[]>([]);
-  const [past, setPast] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data, loading, error, refetch } = useQuery(GET_MESSAGES, {
+    context: { headers: { Authorization: `Bearer ${token}` } }
+  });
+  const [accept] = useMutation(ACCEPT, { onCompleted: () => refetch() });
+  const [decline] = useMutation(DECLINE, { onCompleted: () => refetch() });
+  const [archive] = useMutation(ARCHIVE, { onCompleted: () => refetch() });
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/messages', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Failed to load messages');
-        const data = await res.json();
-        setInbox(data.inbox);
-        setScheduled(data.scheduled);
-        setPast(data.past);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [token]);
+  const [activeTab, setActiveTab] = React.useState<'inbox'|'scheduled'|'past'>('inbox');
 
-  const updateMatchStatus = async (matchId: string, action: 'accept' | 'decline' | 'archive') => {
-    try {
-      const res = await fetch(`/api/messages/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ matchId }),
-      });
-      if (!res.ok) throw new Error(`${action} failed`);
-      setInbox(inbox.filter(m => m._id !== matchId));
-      if (action === 'accept') {
-        const match = inbox.find(m => m._id === matchId)!;
-        setScheduled([{ ...match, status: 'accepted' }, ...scheduled]);
-      }
-      if (action === 'archive' || action === 'decline') {
-        const match = inbox.find(m => m._id === matchId) || scheduled.find(m => m._id === matchId)!;
-        setPast([{ ...match, status: action === 'archive' ? 'archived' : 'declined' }, ...past]);
-        setScheduled(scheduled.filter(m => m._id !== matchId));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  if (loading) return <main className="contact-page"><p>Loading sessions…</p></main>;
+  if (error)   return <main className="contact-page"><p>Error: {error.message}</p></main>;
 
-  const handleAccept = (id: string) => updateMatchStatus(id, 'accept');
-  const handleDecline = (id: string) => updateMatchStatus(id, 'decline');
-  const handleArchive = (id: string) => updateMatchStatus(id, 'archive');
+  const inbox    = data.messages.filter((m: any) => m.status === 'pending');
+  const scheduled= data.messages.filter((m: any) => m.status === 'accepted');
+  const past     = data.messages.filter((m: any) =>
+    ['declined','archived','completed'].includes(m.status)
+  );
 
-  if (loading) {
-    return <div className="contact-page"><p>Loading sessions…</p></div>;
-  }
-
-  const renderCard = (match: Match) => (
-    <div className={`contact-card ${match.status}`} key={match._id}>
+  const renderCard = (m: any) => (
+    <div className={`contact-card ${m.status}`} key={m._id}>
       {activeTab === 'inbox' && (
         <>
-          <p><strong>From:</strong> {match.requesterId.email}</p>
-          <p><strong>Subject:</strong> {match.subject}</p>
-          <p><strong>Proposed Time:</strong> {match.proposedTime}</p>
+          <p><strong>From:</strong> {m.requester.email}</p>
+          <p><strong>Subject:</strong> {m.subject}</p>
+          <p><strong>Proposed Time:</strong> {m.proposedTime}</p>
           <div className="actions">
-            <button onClick={() => handleAccept(match._id)}>Accept</button>
-            <button onClick={() => handleDecline(match._id)}>Decline</button>
-            <button onClick={() => handleArchive(match._id)}>Archive</button>
+            <button onClick={() => accept({ variables: { id: m._id } })}>Accept</button>
+            <button onClick={() => decline({ variables: { id: m._id } })}>Decline</button>
+            <button onClick={() => archive({ variables: { id: m._id } })}>Archive</button>
           </div>
         </>
       )}
       {activeTab === 'scheduled' && (
         <>
-          <p><strong>With:</strong> {match.requesterId.email}</p>
-          <p><strong>Topic:</strong> {match.subject}</p>
-          <p><strong>Time:</strong> {match.proposedTime}</p>
-          <p className="status upcoming">Status: Upcoming</p>
-          <button onClick={() => handleArchive(match._id)}>Archive</button>
+          <p><strong>With:</strong> {m.requester.email}</p>
+          <p><strong>Time:</strong> {m.proposedTime}</p>
+          <p className="status upcoming">Upcoming</p>
+          <button onClick={() => archive({ variables: { id: m._id } })}>Archive</button>
         </>
       )}
       {activeTab === 'past' && (
         <>
-          <p><strong>With:</strong> {match.requesterId.email}</p>
-          <p><strong>Status:</strong> {match.status === 'archived' ? 'Archived' : 'Completed/Declined'}</p>
-          <p><strong>Time:</strong> {new Date(match.createdAt).toLocaleString()}</p>
-          <button className="delete" onClick={() => handleArchive(match._id)}>Delete</button>
+          <p><strong>With:</strong> {m.requester.email}</p>
+          <p><strong>Status:</strong> {m.status}</p>
+          <p><strong>Time:</strong> {new Date(m.createdAt).toLocaleString()}</p>
+          <button className="delete" onClick={() => archive({ variables: { id: m._id } })}>
+            Delete
+          </button>
         </>
       )}
     </div>
@@ -112,7 +81,6 @@ export default function ContactPage() {
   return (
     <main className="contact-page">
       <h1 className="contact-header">My Contact Sessions</h1>
-
       <div className="tabs">
         {(['inbox','scheduled','past'] as const).map(tab => (
           <button
@@ -124,17 +92,15 @@ export default function ContactPage() {
           </button>
         ))}
       </div>
-
       <section className="contact-content">
         <div className="card-list">
           {(activeTab === 'inbox' ? inbox
             : activeTab === 'scheduled' ? scheduled
             : past
           ).map(renderCard)}
-
-          {((activeTab === 'inbox' && inbox.length === 0)
-            || (activeTab === 'scheduled' && scheduled.length === 0)
-            || (activeTab === 'past' && past.length === 0)) && (
+          {((activeTab === 'inbox' && !inbox.length)
+            || (activeTab === 'scheduled' && !scheduled.length)
+            || (activeTab === 'past' && !past.length)) && (
             <p className="empty-state">No {activeTab} sessions.</p>
           )}
         </div>
