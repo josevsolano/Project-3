@@ -1,42 +1,31 @@
 .signup-container {
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin: 2rem auto;
     padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    background-color: #fff;
-  }
-  
-  .fade-in {
-    animation: fadeIn 1s ease-in-out;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    animation: fade-in 0.6s ease;
   }
   
   .signup-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
   
   .signup-header h1 {
     font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   
   .signup-header p {
+    color: #444;
     font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
   }
   
   h2 {
     text-align: center;
-    margin-bottom: 1.5rem;
-    color: #2b3e50;
+    margin-bottom: 1rem;
   }
   
   form {
@@ -45,93 +34,104 @@
     gap: 1rem;
   }
   
-  input, select {
-    padding: 0.65rem 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #f9f9f9;
-  }
-  
   label {
     font-weight: 600;
-    font-size: 0.95rem;
-    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  input,
+  select {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #4e79a7;
+    box-shadow: 0 0 0 2px rgba(78, 121, 167, 0.2);
   }
   
   select[multiple] {
-    height: 140px;
+    height: 6rem;
   }
   
   button[type="submit"] {
-    padding: 0.75rem;
-    font-size: 1rem;
-    background-color: #4e79a7;
+    background-color: #0077cc;
     color: white;
+    font-weight: bold;
     border: none;
     border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
   
   button[type="submit"]:hover {
-    background-color: #3b5f87;
+    background-color: #005fa3;
+    transform: translateY(-1px);
   }
   
-  button[type="submit"]:disabled {
-    background-color: #999;
+  button:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
   }
   
-  .form-message {
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 600;
-  }
-  
-  .form-message.success {
-    background-color: #e0f7ec;
-    color: #237a57;
-    border: 1px solid #b2dfdb;
-  }
-  
-  .form-message.error {
-    background-color: #fbeaea;
-    color: #a33a3a;
-    border: 1px solid #f5c6cb;
-  }
-  
   .redirect-text {
-    margin-top: 1.5rem;
     text-align: center;
-    font-size: 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
   }
   
   .redirect-text a {
-    color: #4e79a7;
+    color: #0077cc;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: bold;
   }
   
   .redirect-text a:hover {
     text-decoration: underline;
   }
   
+  .form-message {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .form-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .form-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
   @media (max-width: 600px) {
-    .signup-header h1 {
-      font-size: 1.5rem;
-    }
-  
-    form input,
-    form select,
-    form button {
-      font-size: 1rem;
-    }
-  
-    select[multiple] {
-      height: 120px;
+    .signup-container {
+      padding: 1.25rem;
     }
   }
   

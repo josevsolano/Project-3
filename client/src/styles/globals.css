@@ -1,11 +1,9 @@
-/* Box sizing reset */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Remove default margin and padding */
 body,
 h1, h2, h3, h4, h5, h6,
 p, ul, ol, figure,
@@ -14,7 +12,6 @@ blockquote, dl, dd {
   padding: 0;
 }
 
-/* Set base font and color */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
@@ -23,26 +20,22 @@ body {
   color: #212529;
 }
 
-/* Remove list styles */
 ul,
 ol {
   list-style: none;
 }
 
-/* Remove anchor underline by default */
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* Consistent image rendering */
 img,
 picture {
   max-width: 100%;
   display: block;
 }
 
-/* Inputs and buttons inherit font */
 input,
 button,
 textarea,
@@ -50,14 +43,12 @@ select {
   font: inherit;
 }
 
-/* Buttons */
 button {
   cursor: pointer;
   border: none;
   background: none;
 }
 
-/* Remove default form focus outlines for better styling */
 input:focus,
 select:focus,
 textarea:focus,
@@ -66,7 +57,6 @@ button:focus {
   outline-offset: 2px;
 }
 
-/* Set smoother transitions globally */
 button,
 input,
 select,
@@ -74,7 +64,6 @@ textarea {
   transition: all 0.2s ease-in-out;
 }
 
-/* Utility helper */
 .hidden {
   display: none !important;
 }

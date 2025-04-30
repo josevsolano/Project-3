@@ -1,21 +1,182 @@
-.contact-form {
-    max-width: 600px;
-    margin: 2rem auto;
-    display: flex;
+.contact-page {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.contact-header {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2b3e50;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tabs button {
+  padding: 0.5rem 1.25rem;
+  background-color: #eee;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tabs button:hover {
+  background-color: #ddd;
+}
+
+.tabs button.active {
+  background-color: #0077cc;
+  color: white;
+}
+
+.contact-content {
+  display: flex;
+  justify-content: center;
+}
+
+.card-list {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px);
+}
+
+.contact-card.scheduled {
+  border-left: 4px solid #28a745;
+}
+
+.contact-card.archived {
+  opacity: 0.7;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.actions button {
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.actions button.accept {
+  background-color: #28a745;
+  color: white;
+}
+
+.actions button.accept:hover {
+  background-color: #218838;
+}
+
+.actions button.decline {
+  background-color: #dc3545;
+  color: white;
+}
+
+.actions button.decline:hover {
+  background-color: #c82333;
+}
+
+.actions button.archive {
+  background-color: #6c757d;
+  color: white;
+}
+
+.actions button.archive:hover {
+  background-color: #5a6268;
+}
+
+.status.upcoming {
+  font-weight: bold;
+  color: #0077cc;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+.fade-in {
+  animation: fade-in 0.6s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bounce {
+  animation: bounce 0.8s ease;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+button:focus,
+.tabs button:focus,
+.actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.3);
+}
+
+@media (max-width: 600px) {
+  .tabs {
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
   }
-  
-  .contact-form input,
-  .contact-form textarea {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+
+  .tabs button {
+    width: 100%;
   }
-  
-  .contact-form button {
-    align-self: flex-start;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
+
+  .contact-page {
+    padding: 1rem;
   }
-  
+}
