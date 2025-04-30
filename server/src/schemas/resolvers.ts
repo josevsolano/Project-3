@@ -5,104 +5,170 @@ import { User, Listing } from '../src/models';
 import { signToken } from '../../utils/auth';
 
 interface AddUserArgs {
-    input:{
-      username: string;
-      email: string;
-      password: string;
+    input: {
+        username: string;
+        email: string;
+        password: string;
     }
-  }
-  
-  interface LoginUserArgs {
+}
+
+interface LoginUserArgs {
     email: string;
     password: string;
-  }
-  
-  interface UserArgs {
-    username: string;
-  }
-  
-  interface PostArgs {
-    thoughtId: string;
-  }
-  
-  interface AddPostArgs {
-    input:{
-      thoughtText: string;
-      thoughtAuthor: string;
-    }
-  }
-  
-  interface AddCommentArgs {
-    thoughtId: string;
-    commentText: string;
-  }
-  
-  interface RemoveCommentArgs {
-    thoughtId: string;
-    commentId: string;
-  }
+}
 
-const resolvers: IResolvers = {
+interface UserArgs {
+    username: string;
+}
+
+interface PostArgs {
+    postId: string;
+}
+
+interface AddPostArgs {
+    input: {
+        postText: string;
+        postAuthor: string;
+    }
+}
+
+interface AddCommentArgs {
+    postId: string;
+    commentText: string;
+}
+
+interface RemoveCommentArgs {
+    postId: string;
+    commentId: string;
+}
+
+const resolvers = {
     Query: {
         users: async () => {
-            return User.find();
+            return User.find().populate('post');
         },
-        user: async (_parent, { id }) => {
-            return User.findById(id);
+        user: async (_parent: any, { username }: UserArgs) => {
+            return User.findOne({ username }).populate('post');
         },
-        listings: async () => {
-            return Listing.find();
+        post: async () => {
+            return await Post.find().sort({ createdAt: -1 });
         },
-        listing: async (_parent, { id }) => {
-            return Listing.findById(id);
+        post: async (_parent: any, { postId }: postArgs) => {
+            return await Post.findOne({ _id: postId });
         },
-        me: async (_parent, _args, context) => {
+        me: async (_parent: any, _args: any, context: any) => {
             if (context.user) {
-                return User.findById(context.user._id);
+                return User.findOne({ _id: context.user._id }).populate('post');
             }
-            throw new AuthenticationError('Not logged in');
+            throw new AuthenticationError('Could not authenticate user.');
         },
     },
     Mutation: {
-        addUser: async (_parent, { username, email, password }) => {
-            const user = await User.create({ username, email, password });
-            const token = signToken(user);
+        addUser: async (_parent: any, { input }: AddUserArgs) => {
+            const user = await User.create({ ...input });
+
+            const token = signToken(user.username, user.email, user._id);
+
             return { token, user };
         },
-        login: async (_parent, { email, password }) => {
+
+        login: async (_parent: any, { email, password }: LoginUserArgs) => {
             const user = await User.findOne({ email });
+
             if (!user) {
-                throw new AuthenticationError('Incorrect credentials');
+                throw new AuthenticationError('Could not authenticate user.');
             }
+
             const correctPw = await user.isCorrectPassword(password);
+
             if (!correctPw) {
-                throw new AuthenticationError('Incorrect credentials');
+                throw new AuthenticationError('Could not authenticate user.');
             }
-            const token = signToken(user);
+
+            const token = signToken(user.username, user.email, user._id);
+
             return { token, user };
         },
-        addListing: async (_parent, { title, description, price }, context) => {
+        addpost: async (_parent: any, { input }: AddpostArgs, context: any) => {
             if (context.user) {
-                const listing = await Listing.create({
-                    title,
-                    description,
-                    price,
-                    user: context.user._id,
-                });
-                return listing;
+                const post = await Post.create({ ...input });
+
+                await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { post: post._id } }
+                );
+
+                return post;
             }
-            throw new AuthenticationError('You need to be logged in');
+            throw AuthenticationError;
+            ('You need to be logged in!');
         },
-        removeListing: async (_parent, { id }, context) => {
+        addComment: async (_parent: any, { postId, commentText }: AddCommentArgs, context: any) => {
             if (context.user) {
-                const listing = await Listing.findOneAndDelete({
-                    _id: id,
-                    user: context.user._id,
-                });
-                return listing;
+                return Post.findOneAndUpdate(
+                    { _id: postId },
+                    {
+                        $addToSet: {
+                            comments: { commentText, commentAuthor: context.user.username },
+                        },
+                    },
+                    {
+                        new: true,
+                        runValidators: true,
+                    }
+                );
             }
-            throw new AuthenticationError('You need to be logged in');
+            throw AuthenticationError;
         },
+        removePost: async (_parent: any, { postId }: postArgs, context: any) => {
+            if (context.user) {
+                const post = await Post.findOneAndDelete({
+                    _id: postId,
+                    postAuthor: context.user.username,
+                });
+
+                if (!post) {
+                    throw AuthenticationError;
+                }
+
+                await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { post: post._id } }
+                );
+
+                return post;
+            }
+            throw AuthenticationError;
+        },
+        removeComment: async (_parent: any, { postId, commentId }: RemoveCommentArgs, context: any) => {
+            if (context.user) {
+                return Post.findOneAndUpdate(
+                    { _id: postId },
+                    {
+                        $pull: {
+                            comments: {
+                                _id: commentId,
+                                commentAuthor: context.user.username,
+                            },
+                        },
+                    },
+                    { new: true }
+                );
+            }
+            throw AuthenticationError;
+        },
+    signup: async (_parent: any, { input }: AddUserArgs) => {
+        const existingUser = await User.findOne({ email: input.email });
+
+        if (existingUser) {
+            throw new AuthenticationError('User with this email already exists.');
+        }
+
+        const user = await User.create({ ...input });
+
+        const token = signToken(user.username, user.email, user._id);
+
+        return { token, user };
     },
 };
 

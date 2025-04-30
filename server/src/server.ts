@@ -4,17 +4,15 @@ import contactRoutes from './routes++/contactPage.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-// import apollo server and graphql
-
-// Contact routes
-app.use('/api/contact', contactRoutes);
-
-// Serve static files (if needed for frontend)
-app.use(express.static(path.join(__dirname, 'public')));
 
 dotenv.config();
 
 const app = express();
+
+app.use('/api/contact', contactRoutes);
+
+// Serve static files (if needed for frontend)
+app.use(express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 3000;
 
 // Middleware
