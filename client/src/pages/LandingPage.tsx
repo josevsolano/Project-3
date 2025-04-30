@@ -1,5 +1,27 @@
 import '../styles/globals.css';
 import '../styles/landing.css';
+import React, { useEffect, useState } from 'react';
+
+const LandingPage: React.FC = () => {
+  const [message, setMessage] = useState<string>('');
+
+  useEffect(() => {
+    const fetchMessage = async () => {
+      try {
+        const response = await fetch('/api/landingpage');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setMessage(data.message);
+      } catch (error) {
+        console.error('Error fetching message:', error);
+      }
+      
+    };
+
+    fetchMessage();
+  }, []);
 
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -134,4 +156,6 @@ export default function LandingPage() {
       </section>
     </div>
   );
-}
+};
+
+export default LandingPage;

@@ -1,8 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import express from 'express';
+import path from 'path';
+import contactRoutes from './routes/contactPage.js';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+// Contact routes
+app.use('/api/contact', contactRoutes);
+
+// Serve static files (if needed for frontend)
+app.use(express.static(path.join(__dirname, 'public')));
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
