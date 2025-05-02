@@ -15,6 +15,7 @@
         "@types/cors": "^2.8.17",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.15.3",
+        "cypress": "^14.3.2",
         "express": "^5.1.0",
         "mongoose": "^8.14.0",
         "nodemon": "^2.0.22"
