@@ -3,20 +3,20 @@ import '../styles/filter.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function FilterPage() {
-   const navigate = useNavigate();
+const FilterPage: React.FC = () => {
+  const navigate = useNavigate();
 
-   const handleNextCandidate = () => {
-     navigate('/next-candidate'); // Replace with the actual route for the next candidate
-   };
+  const handleNextCandidate = (): void => {
+    navigate('/next-candidate'); // Replace with the actual route for the next candidate
+  };
 
-   const handleLastCandidate = () => {
-     navigate('/last-candidate'); // Replace with the actual route for the last candidate
-   };
+  const handleLastCandidate = (): void => {
+    navigate('/last-candidate'); // Replace with the actual route for the last candidate
+  };
 
-   const handleAddCandidate = () => {
-     navigate('/add-candidate'); // Replace with the actual route for adding a candidate
-   };
+  const handleAddCandidate = (): void => {
+    navigate('/add-candidate'); // Replace with the actual route for adding a candidate
+  };
 
   return (
     <div className="container">
@@ -31,4 +31,6 @@ export default function FilterPage() {
       {/* … */}
     </div>
   );
-}
+};
+
+export default FilterPage;
