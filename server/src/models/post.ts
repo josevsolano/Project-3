@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
   title: {
@@ -50,16 +50,20 @@ module.exports = mongoose.model('Post', postSchema);
 import { Schema, Document } from 'mongoose';
 
 export interface IPost extends Document {
+  _id: mongoose.Types.ObjectId;
   title: string;
   content: string;
-  userId: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
+  dateCreated: Date;
+  tags: string[];
+  likes: number;
+  comments: {
+    userId: mongoose.Types.ObjectId;
+    content: string;
+    dateCreated: Date;
+  }[];
+  createdAt: Date;
 }
 
-const PostSchema: Schema = new mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-});
-
-const PostModel = mongoose.model('Post', PostSchema) as mongoose.Model<IPost>;
-export default PostModel;
+const Post = mongoose.model('Post', postSchema) as mongoose.Model<IPost>;
+export default Post;

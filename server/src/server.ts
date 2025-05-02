@@ -1,38 +1,30 @@
-import express from 'express';
-import path from 'path';
-import contactRoutes from './routes++/contactPage.js';
-import mongoose from 'mongoose';
-import cors from 'cors';
+import express, { Express } from 'express';
+import { ApolloServer } from 'apollo-server-express';
 import dotenv from 'dotenv';
+import typeDefs from './schemas/typeDefs';
+import resolvers from './schemas/resolvers';
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
+const PORT = process.env.PORT || 4000;
 
-app.use('/api/contact', contactRoutes);
-
-// Serve static files (if needed for frontend)
-app.use(express.static(path.join(__dirname, 'public')));
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(cors());
-
-// Database connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('Database connection error:', err));
-
-// Routes
-app.get('/', (req, res) => {
-    res.send('Server is running');
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => {
+    const token = req.headers.authorization || '';
+    return { token };
+  },
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+async function startServer() {
+  await server.start();
+  server.applyMiddleware({ app });
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}/graphql`);
+  });
+}
+
+startServer();

@@ -2,18 +2,16 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import typeDefs from './schema/schema';
-import resolvers from './resolvers/resolvers';
+import typeDefs from '../schemas/typeDefs';
+import resolvers from '../schemas/resolvers';
 
 dotenv.config();
 
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/communityHub', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/communityHub')
+  .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Set up Apollo Server

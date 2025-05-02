@@ -1,8 +1,6 @@
-import { IResolvers } from '@graphql-tools/utils';
-import { Post, User } from '../src/models';
+import { Post, User } from '../models/index.ts';
 import { AuthenticationError } from 'apollo-server-express';
-import { User, Listing } from '../src/models';
-import { signToken } from '../../utils/auth';
+import { signToken } from '../utils/auth.ts';
 
 interface AddUserArgs {
     input: {
@@ -50,10 +48,10 @@ const resolvers = {
         user: async (_parent: any, { username }: UserArgs) => {
             return User.findOne({ username }).populate('post');
         },
-        post: async () => {
+        posts: async () => {
             return await Post.find().sort({ createdAt: -1 });
         },
-        post: async (_parent: any, { postId }: postArgs) => {
+        post: async (_parent: any, { postId }: PostArgs) => {
             return await Post.findOne({ _id: postId });
         },
         me: async (_parent: any, _args: any, context: any) => {
@@ -67,7 +65,13 @@ const resolvers = {
         addUser: async (_parent: any, { input }: AddUserArgs) => {
             const user = await User.create({ ...input });
 
-            const token = signToken(user.username, user.email, user._id);
+            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+            const { username, email, _id } = userObject;
+
+            if (!username || !email || !_id) {
+                throw new Error('User object is missing required fields.');
+            }
+            const token = signToken(username, email, _id);
 
             return { token, user };
         },
@@ -85,11 +89,15 @@ const resolvers = {
                 throw new AuthenticationError('Could not authenticate user.');
             }
 
-            const token = signToken(user.username, user.email, user._id);
+            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+            if (!userObject.username || !userObject.email || !userObject._id) {
+                throw new Error('User object is missing required fields.');
+            }
+            const token = signToken(userObject.username, userObject.email, userObject._id);
 
             return { token, user };
         },
-        addpost: async (_parent: any, { input }: AddpostArgs, context: any) => {
+        addpost: async (_parent: any, { input }: AddPostArgs, context: any) => {
             if (context.user) {
                 const post = await Post.create({ ...input });
 
@@ -120,7 +128,7 @@ const resolvers = {
             }
             throw AuthenticationError;
         },
-        removePost: async (_parent: any, { postId }: postArgs, context: any) => {
+        removePost: async (_parent: any, { postId }: PostArgs, context: any) => {
             if (context.user) {
                 const post = await Post.findOneAndDelete({
                     _id: postId,
@@ -156,7 +164,7 @@ const resolvers = {
                 );
             }
             throw AuthenticationError;
-        },
+    },
     signup: async (_parent: any, { input }: AddUserArgs) => {
         const existingUser = await User.findOne({ email: input.email });
 
@@ -166,9 +174,11 @@ const resolvers = {
 
         const user = await User.create({ ...input });
 
-        const token = signToken(user.username, user.email, user._id);
+        const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+        const token = signToken(userObject.username, userObject.email, userObject._id);
 
         return { token, user };
+    },
     },
 };
 
