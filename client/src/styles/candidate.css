@@ -1,16 +1,110 @@
-.candidate-list {
-    list-style: none;
-    margin-top: 1rem;
-  }
-  
-  .candidate-card {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 6px;
-    transition: box-shadow 0.2s ease;
-  }
-  
-  .candidate-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  
+
+.candidate-page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  color: #333;
+  background-color: #fdfdfd;
+}
+
+.candidate-page h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #2b3e50;
+}
+
+.timezone {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.bio {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.tags h3 {
+  margin-bottom: 0.5rem;
+  color: #4e79a7;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #e0f0f8;
+  color: #2b3e50;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin: 0.2rem 0.2rem 0.2rem 0;
+}
+
+.tag.need {
+  background-color: #fdecea;
+  color: #a33a3a;
+}
+
+.tag.shared {
+  background-color: #e0f7ec;
+  color: #237a57;
+}
+
+.contact-button {
+  display: block;
+  margin: 2rem auto;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #4e79a7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact-button:hover:not(:disabled) {
+  background-color: #3b5f87;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.contact-modal {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.contact-modal h2 {
+  margin-top: 0;
+  color: #2b3e50;
+}
+
+.contact-modal textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 1px solid
