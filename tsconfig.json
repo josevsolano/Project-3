@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "es2015",
+      "module": "esnext",
+      "jsx": "react-jsx",
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+  
+      "rootDir": "./client/src",
+      "outDir": "./dist",
+  
+      "baseUrl": "./client/src"
+    },
+    "include": ["client/src/**/*"]
+  }
+  

@@ -1,140 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import MatchCard from '../components/MatchCard';
-import '../styles/filter.css';
-import { useAuth } from '../hooks/useAuth';
+import React from 'react'
+import { gql, useQuery, useMutation } from '@apollo/client'
+import { useAuth } from '../hooks/useAuth'
+import MatchCard, { MatchProfile } from '../components/MatchCard'
 
-interface MatchProfile {
-  id: string;
-  name: string;
-  subjects: string[];
-  availability: string;
-  bio: string;
-}
+const GET_MY_PROFILE = gql`
+  query GetMyProfile {
+    me {
+      id
+      strengths
+      needs
+    }
+  }
+`
+
+const FIND_MATCHES = gql`
+  query FindMatches($strengths: [String!]!, $needs: [String!]!) {
+    findMatches(strengths: $strengths, needs: $needs) {
+      id
+      name
+      email
+      description
+      strengths
+      needs
+    }
+  }
+`
+
+const ADD_MATCH = gql`
+  mutation AddMatch($userId: ID!, $matchId: ID!) {
+    addMatch(userId: $userId, matchId: $matchId) {
+      success
+    }
+  }
+`
+
+const REMOVE_MATCH = gql`
+  mutation RemoveMatch($userId: ID!, $matchId: ID!) {
+    removeMatch(userId: $userId, matchId: $matchId) {
+      success
+    }
+  }
+`
 
 export default function FilterPage() {
-  const { token } = useAuth();
-  const [matches, setMatches] = useState<MatchProfile[]>([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const matchesPerPage = 4;
-
-  const fetchMatches = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/matches?page=${page}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) {
-        throw new Error(`Failed to fetch matches (${res.status})`);
-      }
-      const { results, totalPages: total } = await res.json();
-      setMatches(results);
-      setTotalPages(total);
-    } catch (err: any) {
-      console.error('Error fetching matches:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  const { token } = useAuth()
+  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_MY_PROFILE)
+  const { data: matchesData, loading: matchesLoading, error: matchesError } = useQuery(FIND_MATCHES, {
+    skip: profileLoading || !!profileError,
+    variables: {
+      strengths: profileData?.me.strengths || [],
+      needs: profileData?.me.needs || []
     }
-  };
+  })
+  const [addMatch] = useMutation(ADD_MATCH)
+  const [removeMatch] = useMutation(REMOVE_MATCH)
 
-  useEffect(() => {
-    fetchMatches();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
-
-  const handleAddCandidate = async (id: string) => {
-    try {
-      const res = await fetch(`/api/candidates/${id}/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) throw new Error(`Add failed (${res.status})`);
-      await fetchMatches();
-    } catch (err: any) {
-      console.error('Error adding candidate:', err);
-      alert(`Could not add candidate: ${err.message}`);
-    }
-  };
-
-  const handleRemoveMatch = async (id: string) => {
-    try {
-      const res = await fetch(`/api/matches/${id}/remove`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) throw new Error(`Remove failed (${res.status})`);
-      await fetchMatches();
-    } catch (err: any) {
-      console.error('Error removing match:', err);
-      alert(`Could not remove match: ${err.message}`);
-    }
-  };
-
-  if (loading) {
-    return (
-      <main className="filter-container">
-        <p>Loading matches…</p>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="filter-container">
-        <p className="error">Error: {error}</p>
-        <button onClick={fetchMatches}>Retry</button>
-      </main>
-    );
-  }
+  if (profileLoading || matchesLoading) return <p>Loading…</p>
+  if (profileError || matchesError) return <p>Error loading matches.</p>
 
   return (
-    <main className="filter-container">
-      <h2>Your Matches</h2>
-
-      <div className="card-grid">
-        {matches.map((match) => (
-          <MatchCard
-            key={match.id}
-            match={match}
-            onAdd={() => handleAddCandidate(match.id)}
-            onRemove={() => handleRemoveMatch(match.id)}
-          />
-        ))}
-        {matches.length === 0 && (
-          <p className="empty-state">No matches found on this page.</p>
-        )}
-      </div>
-
-      <div className="pagination-controls">
-        <button
-          onClick={() => setPage((p) => Math.max(p - 1, 0))}
-          disabled={page === 0}
-        >
-          &lt; Prev
-        </button>
-        <span>
-          Page {page + 1} of {totalPages}
-        </span>
-        <button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
-          disabled={page >= totalPages - 1}
-        >
-          Next &gt;
-        </button>
-      </div>
-    </main>
-  );
+    <div>
+      <h1>Potential Tutors</h1>
+      {matchesData.findMatches.map((m: MatchProfile) => (
+        <MatchCard
+          key={m.id}
+          match={m}
+          onAdd={async () => {
+            await addMatch({
+              variables: { userId: profileData.me.id, matchId: m.id }
+            })
+          }}
+          onRemove={async () => {
+            await removeMatch({
+              variables: { userId: profileData.me.id, matchId: m.id }
+            })
+          }}
+        />
+      ))}
+    </div>
+  )
 }
