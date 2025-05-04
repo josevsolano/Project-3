@@ -1,19 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import LandingPage from './pages/LandingPage'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+import LandingPage   from './pages/LandingPage';
+import SignupPage    from './pages/SignupPage';
+import FilterPage    from './pages/FilterPage';
+import CandidatePage from './pages/CandidatePage';
+import ContactPage   from './pages/ContactPage';
 
+export default function App() {
   return (
-    <> 
-      <div>
-        <LandingPage/>
-      </div>
-    </>
-  )
+    <Routes>
+      <Route path="/"            element={<LandingPage />} />
+      <Route path="/signup"      element={<SignupPage />} />
+      <Route path="/filter"      element={<FilterPage />} />
+      <Route path="/candidate/:id" element={<CandidatePage />} />
+      <Route path="/contact"     element={<ContactPage />} />
+    </Routes>
+  );
 }
-
-export default App
