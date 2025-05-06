@@ -5,13 +5,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuth } from '../hooks/useAuth';
 
-// const GET_SPLASH = gql`
-//   query GetSplash {
-//     landingPage {
-//       message
-//     }
-//   }
-// `;
+// // const GET_SPLASH = gql`
+// //   query GetSplash {
+// //     landingPage {
+// //       message
+// //     }
+// //   }
+// // `;
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -99,7 +99,7 @@ export default function LandingPage() {
     <div className="container">
       <section className="landing-hero fade-in">
         <div className="landing-cta">
-       
+          <h1 className="landing-title">T‑eachother!</h1>
           <button onClick={handleScrollToForm}>Get Started</button>
         </div>
       </section>

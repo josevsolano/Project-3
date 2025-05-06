@@ -150,7 +150,7 @@ export default function SignupPage() {
           required
         />
 
-        <label htmlFor="skills">What can you help others learn?</label>
+        <label htmlFor="skills">What can you help others learn? Hold shift to select more than one.</label>
         <select
           id="skills"
           name="skills"
@@ -167,7 +167,7 @@ export default function SignupPage() {
           ))}
         </select>
 
-        <label htmlFor="needs">What do you need help with?</label>
+        <label htmlFor="needs">What do you need help with? Hold shift to select more than one.</label>
         <select
           id="needs"
           name="needs"
