@@ -22,7 +22,7 @@ export const validateEmailFormat = (email: string): boolean => {
 };
 
 export const validateRequestBody = (requiredFields: string[]) => {
-    return (req: Request, res: Response, next: NextFunction): void => {
+    return (req: Request, res: Response, next: NextFunction): any => {
         const missingFields = requiredFields.filter(field => !(field in req.body));
 
         if (missingFields.length > 0) {

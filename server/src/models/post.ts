@@ -45,10 +45,6 @@ const postSchema = new mongoose.Schema({
 },
  { timestamps: true });
 
-module.exports = mongoose.model('Post', postSchema);
-
-import { Schema, Document } from 'mongoose';
-
 export interface IPost extends Document {
   _id: mongoose.Types.ObjectId;
   title: string;
@@ -65,5 +61,5 @@ export interface IPost extends Document {
   createdAt: Date;
 }
 
-const Post = mongoose.model('Post', postSchema) as mongoose.Model<IPost>;
+const Post = mongoose.model('Post', postSchema);
 export default Post;

@@ -22,10 +22,6 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.isCorrectPassword = async function (password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
 };
-export const UserModel = mongoose.model('User', userSchema);
-
-// Example User model definition and export
-import { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
   name: string;
@@ -34,7 +30,7 @@ export interface IUser extends Document {
   isCorrectPassword(password: string): Promise<boolean>;
 }
 
-const UserSchema: Schema = new mongoose.Schema({
+const UserSchema: mongoose.Schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },

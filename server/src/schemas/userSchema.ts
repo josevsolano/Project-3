@@ -1,6 +1,4 @@
-import { gql } from 'apollo-server-express';
-
-const userSchema = gql`
+let userSchema = `
   type User {
     id: ID!
     name: String!
@@ -15,5 +13,9 @@ const userSchema = gql`
     createUser(name: String!, email: String!, password: String!): User
   }
 `;
-
+userSchema += `
+  extend type Query {
+    user(id: ID!): User
+  }
+`;
 export default userSchema;

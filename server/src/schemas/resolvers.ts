@@ -1,6 +1,5 @@
-import { Post, User } from '../models/index.ts';
-import { AuthenticationError } from 'apollo-server-express';
-import { signToken } from '../utils/auth.ts';
+import { Post, User } from '../models/index.js';
+import { signToken, AuthenticationError } from '../utils/auth.js';
 
 interface AddUserArgs {
     input: {
@@ -65,7 +64,7 @@ const resolvers = {
         addUser: async (_parent: any, { input }: AddUserArgs) => {
             const user = await User.create({ ...input });
 
-            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: unknown }>;
             const { username, email, _id } = userObject;
 
             if (!username || !email || !_id) {
@@ -89,7 +88,7 @@ const resolvers = {
                 throw new AuthenticationError('Could not authenticate user.');
             }
 
-            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+            const userObject = user.toObject() as Partial<{ username: string; email: string; _id: unknown }>;
             if (!userObject.username || !userObject.email || !userObject._id) {
                 throw new Error('User object is missing required fields.');
             }
@@ -174,7 +173,7 @@ const resolvers = {
 
         const user = await User.create({ ...input });
 
-        const userObject = user.toObject() as Partial<{ username: string; email: string; _id: string }>;
+        const userObject = user.toObject() as Partial<{ username: string; email: string; _id: unknown }>;
         const token = signToken(userObject.username, userObject.email, userObject._id);
 
         return { token, user };

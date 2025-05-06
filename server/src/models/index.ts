@@ -1,5 +1,5 @@
-import Post from './post.ts';
-import User from './user.ts';
+import Post from './post.js';
+import User from './user.js';
 
 
 export { User, Post };
