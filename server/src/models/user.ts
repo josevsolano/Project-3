@@ -1,40 +1,30 @@
+// server/models/User.js
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  skills: {
+    type: [String],
+    default: [],
+    validate: arr => Array.isArray(arr),
+  },
+  needs: {
+    type: [String],
+    default: [],
+    validate: arr => Array.isArray(arr),
+  },
+}, {
+  timestamps: true, // adds createdAt / updatedAt
 });
 
-// Add a method to compare passwords
-userSchema.methods.isCorrectPassword = async function (password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password);
-};
-
-export interface IUser extends Document {
-  name: string;
-  email: string;
-  password: string;
-  isCorrectPassword(password: string): Promise<boolean>;
-}
-
-const UserSchema: mongoose.Schema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
-
-const User = mongoose.model<IUser>('User', UserSchema);
-export default User;
+export default mongoose.model('User', userSchema);
