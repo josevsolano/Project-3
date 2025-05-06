@@ -1,5 +1,4 @@
-import Post from './post.js';
-import User from './user.js';
+import Candidate from './candidate.js';
+import contactRequest from './contactRequest.js';
 
-
-export { User, Post };
+export { Candidate, contactRequest };

@@ -5,13 +5,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuth } from '../hooks/useAuth';
 
-const GET_SPLASH = gql`
-  query GetSplash {
-    landingPage {
-      message
-    }
-  }
-`;
+// const GET_SPLASH = gql`
+//   query GetSplash {
+//     landingPage {
+//       message
+//     }
+//   }
+// `;
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -31,14 +31,14 @@ export default function LandingPage() {
     type: '',
   });
 
-  const {
-    data: splashData,
-    loading: splashLoading,
-    error: splashError,
-    refetch: refetchSplash,
-  } = useQuery(GET_SPLASH, {
-    fetchPolicy: 'cache-first',
-  });
+  // const {
+  //   data: splashData,
+  //   loading: splashLoading,
+  //   error: splashError,
+  //   refetch: refetchSplash,
+  // } = useQuery(GET_SPLASH, {
+  //   fetchPolicy: 'cache-first',
+  // });
 
   const [login, { loading: loggingIn, error: loginError }] = useMutation(LOGIN, {
     onCompleted: ({ login: { token } }) => {
@@ -58,23 +58,23 @@ export default function LandingPage() {
     }
   }, [loggedIn, navigate]);
 
-  if (splashLoading) {
-    return (
-      <main className="container">
-        <p>Loading…</p>
-      </main>
-    );
-  }
-  if (splashError) {
-    return (
-      <main className="container">
-        <p>Error loading splash: {splashError.message}</p>
-        <button onClick={() => refetchSplash()}>Retry</button>
-      </main>
-    );
-  }
+  // if (splashLoading) {
+  //   return (
+  //     <main className="container">
+  //       <p>Loading…</p>
+  //     </main>
+  //   );
+  // }
+  // if (splashError) {
+  //   return (
+  //     <main className="container">
+  //       <p>Error loading splash: {splashError.message}</p>
+  //       <button onClick={() => refetchSplash()}>Retry</button>
+  //     </main>
+  //   );
+  // }
 
-  const splashMessage = splashData?.landingPage.message ?? '“We all gain knowledge from each other.”';
+  // const splashMessage = splashData?.landingPage.message ?? '“We all gain knowledge from each other.”';
 
   const handleScrollToForm = () => {
     const el = document.getElementById('auth-form');
@@ -99,7 +99,7 @@ export default function LandingPage() {
     <div className="container">
       <section className="landing-hero fade-in">
         <div className="landing-cta">
-          <h1>{splashMessage}</h1>
+       
           <button onClick={handleScrollToForm}>Get Started</button>
         </div>
       </section>

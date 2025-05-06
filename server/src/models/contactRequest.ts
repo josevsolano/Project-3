@@ -1,17 +1,17 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IContact extends Document {
+export interface IContactRequest extends Document {
   name: string;
   email: string;
   message: string;
   submittedAt: Date;
 }
 
-const contactSchema = new Schema<IContact>({
+const contactRequestSchema = new Schema<IContactRequest>({
   name: { type: String, required: true },
   email: { type: String, required: true },
   message: { type: String, required: true },
   submittedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model<IContact>('Contact', contactSchema);
+export default mongoose.model<IContactRequest>('ContactRequest', contactRequestSchema);

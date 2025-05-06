@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
+import { Types } from 'mongoose';
 dotenv.config();
 
 
@@ -25,7 +26,7 @@ export const authenticateToken = ({ req }: any) => {
   return req;
 };
 
-export const signToken = (username: string|undefined, email: string|undefined, _id: unknown) => {
+export const signToken = (username: string|undefined|Types.ObjectId, email: string|undefined, _id: unknown) => {
   const payload = { username, email, _id };
   const secretKey: any = process.env.JWT_SECRET_KEY; // Get the secret key from environment variables
 
@@ -37,4 +38,5 @@ export class AuthenticationError extends GraphQLError {
     super(message, undefined, undefined, undefined, ['UNAUTHENTICATED']);
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
-};
+}
+

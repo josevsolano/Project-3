@@ -1,63 +1,64 @@
-const typeDefs = `
+export const typeDefs = `
+  scalar DateTime
+
   type User {
     id: ID!
-    username: String!
     email: String!
-    password: String!
-    createdAt: String
+    skills: [String!]!
+    needs: [String!]!
+    createdAt: DateTime
   }
 
-  type Tutor {
-    id: ID!
-    name: String!
-    subject: String!
-    hourlyRate: Float!
-    availability: [String]!
+  type AuthPayload {
+    token: String!
+    user: User!
   }
 
-  type Post {
-    id: ID!
-    name: String!
-    description: String!
+  enum SessionStatus {
+    PENDING
+    ACCEPTED
+    DECLINED
   }
 
-  type Comment {
+  type SessionRequest {
     id: ID!
-    postId: ID!
+    from: User!
+    to: User!
+    time: DateTime!
+    status: SessionStatus!
+  }
+
+  type Message {
+    id: ID!
+    from: User!
+    to: User!
     content: String!
-    createdAt: String!
-  }
-
-  type Contact {
-    id: ID!
-    name: String!
-    email: String!
-    message: String!
-  }
-
-  type Auth {
-    token: ID!
-    user: User
+    sentAt: DateTime!
   }
 
   type Query {
-    users: [User]
-    tutors: [Tutor]
-    tutor(id: ID!): Tutor
-    getAllUsers: [User!]!
-    getUserById(id: ID!): User
-    getAllPosts: [Post!]!
-    getPostById(id: ID!): Post
+    me: User
+    users(hasSkill: [String!], needsHelpWith: [String!]): [User!]!
+    messages: [Message!]!
+    sessionRequests: [SessionRequest!]!
+    getSplash: landingPage
+  }
+
+  type landingPage {
+    message: String!
   }
 
   type Mutation {
-    login(email: String!, password: String!): Auth
-    signUp(username: String!, email: String!, password: String!): Auth
-    addUser(username: String!, email: String!, password: String!): User
-    addTutor(name: String!, subject: String!, hourlyRate: Float!, availability: [String]!): Tutor
-    removeTutor(id: ID!): Tutor
-    createPost(name: String!, description: String!): Post!
-    deletePost(id: ID!): Post!
+    signup(
+      email: String!
+      password: String!
+      skills: [String!]!
+      needs: [String!]!
+    ): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    sendMessage(toUserId: ID!, content: String!): Message!
+    requestSession(toUserId: ID!, time: DateTime!): SessionRequest!
+    respondToSession(requestId: ID!, accept: Boolean!): SessionRequest!
   }
 `;
 

@@ -1,38 +1,38 @@
 import mongoose from 'mongoose';
 
-const postSchema = new mongoose.Schema({
+const sessionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
     trim: true,
   },
-  content: {
+  description: {
     type: String,
     required: true,
   },
-  userId: {
+  tutorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Reference to the User model
   },
-  dateCreated: {
+  dateScheduled: {
     type: Date,
-    default: Date.now,
+    required: true,
   },
   tags: {
     type: [String],
     default: [],
   },
-  likes: {
+  attendees: {
     type: Number,
     default: 0,
   },
-  comments: [
+  feedback: [
     {
       userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Reference to the User model
       },
-      content: {
+      comment: {
         type: String,
         required: true,
       },
@@ -45,21 +45,21 @@ const postSchema = new mongoose.Schema({
 },
  { timestamps: true });
 
-export interface IPost extends Document {
+export interface ISession extends Document {
   _id: mongoose.Types.ObjectId;
   title: string;
-  content: string;
-  userId?: mongoose.Types.ObjectId;
-  dateCreated: Date;
+  description: string;
+  tutorId?: mongoose.Types.ObjectId;
+  dateScheduled: Date;
   tags: string[];
-  likes: number;
-  comments: {
+  attendees: number;
+  feedback: {
     userId: mongoose.Types.ObjectId;
-    content: string;
+    comment: string;
     dateCreated: Date;
   }[];
   createdAt: Date;
 }
 
-const Post = mongoose.model('Post', postSchema);
-export default Post;
+const Session = mongoose.model('Session', sessionSchema);
+export default Session;
