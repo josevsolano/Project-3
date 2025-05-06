@@ -1,5 +1,6 @@
 import { Post, User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
+import userSchema from '../schemas/userSchema.js';
 
 interface AddUserArgs {
     input: {

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Backend server for the Tutor Trader project.",
     "main": "index.js",
-    "type": "module",
+    "type": "commonjs",
     "scripts": {
         "dev": "nodemon index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -23,5 +23,11 @@
         "express": "^5.1.0",
         "graphql": "^16.11.0",
         "jsonwebtoken": "^9.0.2"
+    },
+    "dependencies": {
+        "@apollo/server": "^4.12.0",
+        "bcrypt": "^5.1.1",
+        "dotenv": "^16.5.0",
+        "mongoose": "^8.14.1"
     }
 }
