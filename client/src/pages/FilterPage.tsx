@@ -1,34 +1,82 @@
-import '../styles/globals.css';
-import '../styles/filter.css';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { gql, useQuery, useMutation } from '@apollo/client'
+import { useAuth } from '../hooks/useAuth'
+import MatchCard, { MatchProfile } from '../components/MatchCard'
+
+const GET_MY_PROFILE = gql`
+  query GetMyProfile {
+    me {
+      id
+      strengths
+      needs
+    }
+  }
+`
+
+const FIND_MATCHES = gql`
+  query FindMatches($strengths: [String!]!, $needs: [String!]!) {
+    findMatches(strengths: $strengths, needs: $needs) {
+      id
+      name
+      email
+      description
+      strengths
+      needs
+    }
+  }
+`
+
+const ADD_MATCH = gql`
+  mutation AddMatch($userId: ID!, $matchId: ID!) {
+    addMatch(userId: $userId, matchId: $matchId) {
+      success
+    }
+  }
+`
+
+const REMOVE_MATCH = gql`
+  mutation RemoveMatch($userId: ID!, $matchId: ID!) {
+    removeMatch(userId: $userId, matchId: $matchId) {
+      success
+    }
+  }
+`
 
 export default function FilterPage() {
-   const navigate = useNavigate();
+  const { token } = useAuth()
+  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_MY_PROFILE)
+  const { data: matchesData, loading: matchesLoading, error: matchesError } = useQuery(FIND_MATCHES, {
+    skip: profileLoading || !!profileError,
+    variables: {
+      strengths: profileData?.me.strengths || [],
+      needs: profileData?.me.needs || []
+    }
+  })
+  const [addMatch] = useMutation(ADD_MATCH)
+  const [removeMatch] = useMutation(REMOVE_MATCH)
 
-   const handleNextCandidate = () => {
-     navigate('/next-candidate'); // Replace with the actual route for the next candidate
-   };
-
-   const handleLastCandidate = () => {
-     navigate('/last-candidate'); // Replace with the actual route for the last candidate
-   };
-
-   const handleAddCandidate = () => {
-     navigate('/add-candidate'); // Replace with the actual route for adding a candidate
-   };
+  if (profileLoading || matchesLoading) return <p>Loading…</p>
+  if (profileError || matchesError) return <p>Error loading matches.</p>
 
   return (
-    <div className="container">
-      <section className="filter-hero">
-        <div className="filter-cta">
-          <h1>"Select Tutor to trade Knowledge with.”</h1>
-          <button onClick={handleNextCandidate}>Next Candidate</button>
-          <button onClick={handleLastCandidate}>Last Candidate</button>
-          <button onClick={handleAddCandidate}>Add Candidate</button>
-        </div>
-      </section>
-      {/* … */}
+    <div>
+      <h1>Potential Tutors</h1>
+      {matchesData.findMatches.map((m: MatchProfile) => (
+        <MatchCard
+          key={m.id}
+          match={m}
+          onAdd={async () => {
+            await addMatch({
+              variables: { userId: profileData.me.id, matchId: m.id }
+            })
+          }}
+          onRemove={async () => {
+            await removeMatch({
+              variables: { userId: profileData.me.id, matchId: m.id }
+            })
+          }}
+        />
+      ))}
     </div>
-  );
+  )
 }

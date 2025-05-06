@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
@@ -28,3 +29,23 @@
     "useUnknownInCatchVariables": true /* Ensure 'unknown' is used for catch clause variables. */
   }
 }
+=======
+    "compilerOptions": {
+      "target": "es2015",
+      "module": "esnext",
+      "jsx": "react-jsx",
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+  
+      "rootDir": "./client/src",
+      "outDir": "./dist",
+  
+      "baseUrl": "./client/src"
+    },
+    "include": ["client/src/**/*"]
+  }
+  
+>>>>>>> 55133be859a4baffb7ba82367c8de58e2eedf04c

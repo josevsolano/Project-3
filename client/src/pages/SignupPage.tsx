@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import '../styles/globals.css';
 import '../styles/signup.css';
 import { useNavigate, Link } from 'react-router-dom';
-import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { useAuth } from '../hooks/useAuth';
 
@@ -34,10 +34,23 @@ export default function SignupPage() {
     skills: [] as string[],
     needs: [] as string[],
   });
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
 
-  const [signup, { loading: isSubmitting, error: signupError }] = useMutation(SIGNUP);
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | '' }>({
+    text: '',
+    type: '',
+  });
+
+  const [signup, { loading: isSubmitting }] = useMutation(SIGNUP, {
+    onCompleted: ({ signup: { token } }) => {
+      localStorage.setItem('token', token);
+      setToken(token);
+      setMessage({ text: '✅ Signup successful! Redirecting…', type: 'success' });
+      setTimeout(() => navigate('/filter'), 1000);
+    },
+    onError: (err) => {
+      setMessage({ text: `❌ ${err.message}`, type: 'error' });
+    },
+  });
 
   const subjectOptions = [
     "Math", "Science", "English", "History",
@@ -47,52 +60,46 @@ export default function SignupPage() {
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // clear any existing messages when user edits
+    if (message.text) setMessage({ text: '', type: '' });
   };
 
   const handleMultiSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const values = Array.from(e.target.selectedOptions, o => o.value);
-    setFormData(prev => ({ ...prev, [e.target.name]: values }));
+    const { name } = e.target;
+    const values = Array.from(e.target.selectedOptions, (o) => o.value);
+    setFormData((prev) => ({ ...prev, [name]: values }));
+    if (message.text) setMessage({ text: '', type: '' });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(''); setMessageType('');
+    setMessage({ text: '', type: '' });
 
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("❌ Passwords don't match.");
-      setMessageType('error');
+    const { email, password, confirmPassword, skills, needs } = formData;
+
+    if (!email.trim() || !password) {
+      setMessage({ text: '❌ Email and password are required.', type: 'error' });
       return;
     }
-    if (!formData.email || !formData.password || !formData.skills.length || !formData.needs.length) {
-      setMessage("❌ All fields are required.");
-      setMessageType('error');
+    if (password !== confirmPassword) {
+      setMessage({ text: "❌ Passwords don't match.", type: 'error' });
+      return;
+    }
+    if (skills.length === 0 || needs.length === 0) {
+      setMessage({ text: '❌ Please select at least one skill and one need.', type: 'error' });
       return;
     }
 
-    try {
-      const { data } = await signup({
-        variables: {
-          email: formData.email,
-          password: formData.password,
-          skills: formData.skills,
-          needs: formData.needs,
-        },
-      });
-
-      const token = data.signup.token;
-      localStorage.setItem('token', token);
-      setToken(token);
-
-      setMessage("✅ Signup successful! Redirecting...");
-      setMessageType('success');
-
-      setTimeout(() => navigate('/filter'), 1000);
-    } catch (err: any) {
-      console.error(err);
-      setMessage(`❌ ${err.message}`);
-      setMessageType('error');
-    }
+    signup({
+      variables: {
+        email: email.trim(),
+        password,
+        skills,
+        needs,
+      },
+    });
   };
 
   return (
@@ -100,24 +107,16 @@ export default function SignupPage() {
       <header className="signup-header">
         <h1>Welcome to Tutor Trader</h1>
         <p>
-          Set up your profile so we can match you with peers who need your help — and those who can help you in return!
+          Set up your profile so we can match you with peers who need your help — and those who can
+          help you in return!
         </p>
       </header>
 
-      <h2>Let’s Create Your Profile</h2>
-
-      {message && (
-        <div className={`form-message ${messageType}`}>
-          {message}
-        </div>
-      )}
-      {signupError && (
-        <div className="form-message error">
-          {signupError.message}
-        </div>
+      {message.text && (
+        <div className={`form-message ${message.type}`}>{message.text}</div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form className="signup-form" onSubmit={handleSubmit}>
         <label htmlFor="email">Email</label>
         <input
           id="email"
@@ -161,8 +160,10 @@ export default function SignupPage() {
           disabled={isSubmitting}
           required
         >
-          {subjectOptions.map(subject => (
-            <option key={subject} value={subject}>{subject}</option>
+          {subjectOptions.map((subject) => (
+            <option key={subject} value={subject}>
+              {subject}
+            </option>
           ))}
         </select>
 
@@ -176,13 +177,15 @@ export default function SignupPage() {
           disabled={isSubmitting}
           required
         >
-          {subjectOptions.map(subject => (
-            <option key={subject} value={subject}>{subject}</option>
+          {subjectOptions.map((subject) => (
+            <option key={subject} value={subject}>
+              {subject}
+            </option>
           ))}
         </select>
 
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Sign Up!"}
+          {isSubmitting ? 'Submitting…' : 'Sign Up!'}
         </button>
       </form>
 

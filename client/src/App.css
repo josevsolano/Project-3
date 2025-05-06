@@ -1,41 +1,29 @@
-/* app.css – cooperative shell styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-.app-shell {
-  max-width: 1280px;
-  margin: 0 auto;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdfdfd;
+  color: #333;
+  line-height: 1.5;
+}
+
+a {
+  color: #4e79a7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+}
+
+main {
   padding: 2rem;
-  text-align: center;
-}
-
-
-.demo .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.demo .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.demo .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .demo a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.demo .card {
-  padding: 2em;
-}
-
-.demo .read-the-docs {
-  color: #888;
 }
