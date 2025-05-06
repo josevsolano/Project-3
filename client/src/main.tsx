@@ -11,12 +11,12 @@ import './app.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <ApolloProvider client={client}>
+        <AuthProvider>
           <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </ApolloProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

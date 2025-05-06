@@ -5,13 +5,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuth } from '../hooks/useAuth';
 
-// const GET_SPLASH = gql`
-//   query GetSplash {
-//     landingPage {
-//       message
-//     }
-//   }
-// `;
+// // const GET_SPLASH = gql`
+// //   query GetSplash {
+// //     landingPage {
+// //       message
+// //     }
+// //   }
+// // `;
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {

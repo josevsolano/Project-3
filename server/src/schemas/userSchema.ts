@@ -1,21 +1,22 @@
 let userSchema = `
-  type User {
+  type user {
     id: ID!
     name: String!
     email: String!
+    expertise: String!
   }
 
   type Query {
-    getUser(id: ID!): User
+    getuser(id: ID!): user
   }
 
   type Mutation {
-    createUser(name: String!, email: String!, password: String!): User
+    createuser(name: String!, email: String!, expertise: String!, password: String!): user
   }
 `;
 userSchema += `
   extend type Query {
-    user(id: ID!): User
+    user(id: ID!): user
   }
 `;
 export default userSchema;
