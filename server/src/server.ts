@@ -13,6 +13,8 @@ const server = new ApolloServer({
   resolvers,
 });
 
+app.use(express.json());
+
 const startApolloServer = async () => {
   await server.start();
   
@@ -22,13 +24,13 @@ const startApolloServer = async () => {
   app.use('/graphql', expressMiddleware(server));
 
   // if we're in production, serve client/dist as static assets
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
+ // if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../../client/dist')));
 
     app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
     });
-  }
+  //}
   
   db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
