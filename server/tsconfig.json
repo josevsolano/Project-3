@@ -1,14 +1,16 @@
+// server/tsconfig.json
 {
-  // "extends": "../tsconfig.base.json", // Removed as the file does not exist
   "compilerOptions": {
-    /* Modules */
-    "rootDir": "src" /* Specify the root folder within your source files. */,
-
-    /* Emit */
-    "outDir": "dist", /* Specify an output folder for all emitted files. */
-    "noEmitOnError": true, /* Disable emitting files if any type checking errors are reported. */
-    "esModuleInterop": true /* Enables interoperability between CommonJS and ES Modules. */
+    "target": "ES2020",                // or whatever your Node version supports
+    "module": "commonjs",              
+    "rootDir": "src",                  // where your .ts lives
+    "outDir": "dist",                  // where compiled .js will go
+    "strict": true,                    
+    "esModuleInterop": true,           
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true                  
   },
-  "include": ["src"],
-  "typeRoots": ["./node_modules/@types", "./src/types"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
