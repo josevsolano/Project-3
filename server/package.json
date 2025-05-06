@@ -3,21 +3,25 @@
     "version": "1.0.0",
     "description": "Backend server for the Tutor Trader project.",
     "main": "index.js",
+    "type": "module",
     "scripts": {
-        "start": "node index.js",
         "dev": "nodemon index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "watch": "nodemon dist/server.js",
+        "seed": "node dist/seeds/seed.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
         "@types/cors": "^2.8.17",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.15.3",
-        "cypress": "^14.3.2",
         "express": "^5.1.0",
-        "mongoose": "^8.14.0",
-        "nodemon": "^2.0.22"
+        "graphql": "^16.11.0",
+        "jsonwebtoken": "^9.0.2"
     }
 }

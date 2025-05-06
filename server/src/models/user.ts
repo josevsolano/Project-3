@@ -1,57 +1,40 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  dateCreated: {
-    type: Date,
-    default: Date.now,
-  },
-  profilePicture: {
-    type: String,
-    default: 'default.jpg', // Default profile picture
-  },
-  bio: {
-    type: String,
-    default: 'Hello! I am a new user.',
+    username: {
+        type: String,
+        required: true,
+        unique: true,
     },
-  posts: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post', // Reference to the Post model
+    email: {
+        type: String,
+        required: true,
+        unique: true,
     },
-  ]
-}, { timestamps: true });
+    password: {
+        type: String,
+        required: true,
+    },
+});
 
-module.exports = mongoose.model('User', userSchema);
-
-// Example User model definition and export
-import mongoose, { Schema, Document } from 'mongoose';
+// Add a method to compare passwords
+userSchema.methods.isCorrectPassword = async function (password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+};
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  isCorrectPassword(password: string): Promise<boolean>;
 }
 
-const UserSchema: Schema = new mongoose.Schema({
+const UserSchema: mongoose.Schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });
 
-const User = mongoose.model('User', UserSchema) as mongoose.Model<IUser>;
+const User = mongoose.model<IUser>('User', UserSchema);
 export default User;

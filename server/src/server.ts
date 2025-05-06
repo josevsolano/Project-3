@@ -1,38 +1,41 @@
 import express from 'express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
 import path from 'path';
-import contactRoutes from './routes++/contactPage.js';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
 
-dotenv.config();
+import { typeDefs, resolvers } from './schemas/index.js';
+import db from './config/connection.js';
 
+const PORT = process.env.PORT || 3001;
 const app = express();
-
-app.use('/api/contact', contactRoutes);
-
-// Serve static files (if needed for frontend)
-app.use(express.static(path.join(__dirname, 'public')));
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(cors());
-
-// Database connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('Database connection error:', err));
-
-// Routes
-app.get('/', (req, res) => {
-    res.send('Server is running');
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+const startApolloServer = async () => {
+  await server.start();
+  
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+  
+  app.use('/graphql', expressMiddleware(server));
+
+  // if we're in production, serve client/dist as static assets
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (_req, res) => {
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
+  }
+  
+  db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+    console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+  });
+};
+
+startApolloServer();
