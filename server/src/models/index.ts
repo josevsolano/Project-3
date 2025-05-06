@@ -1,4 +1,4 @@
-import Candidate from './candidate.js';
-import contactRequest from './contactRequest.js';
+import User from './user.js';
+import contactRequest from './message.js';
 
-export { Candidate, contactRequest };
+export { User, contactRequest };

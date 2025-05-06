@@ -1,30 +1,40 @@
 import { AuthenticationError } from '../utils/auth.js';
-import { Candidate, contactRequest } from '../models/index.js';
+import { User } from '../models/index.js';
 import { signToken } from '../utils/auth.js';
+import userSchema from './userSchema.js';
+
+// Define or import the IUser interface
+interface IUser {
+    _id: string;
+    email: string;
+    skills: string[];
+    needs: string[];
+    isCorrectPassword?: (password: string) => Promise<boolean>;
+}
 
 const resolvers = {
     Query: {
         me: async (_parent: any, _args: any, context: any) => {
-            if (!context.candidate) throw new AuthenticationError('Could not authenticate candidate.');
-            const candidate = await Candidate.findById(context.candidate._id);
-            if (!candidate) throw new AuthenticationError('Candidate not found.');
+            if (!context.User) throw new AuthenticationError('Could not authenticate User.');
+            const foundUser = await User.findById(context.User._id).lean() as unknown as IUser;
+            if (!foundUser) throw new AuthenticationError('User not found.');
             return {
-                id: candidate._id,
-                email: candidate.email,
-                skills: candidate.skills,
-                needs: candidate.needs,
+                id: foundUser._id,
+                email: User.email,
+                skills: User.skills,
+                needs: User.needs,
             };
         },
         users: async (_parent: any, { hasSkill, needsHelpWith }: { hasSkill?: string[]; needsHelpWith?: string[] }) => {
             const query: any = {};
             if (hasSkill) query.skills = { $in: hasSkill };
             if (needsHelpWith) query.needs = { $in: needsHelpWith };
-            const candidates = await Candidate.find(query);
-            return candidates.map((candidate) => ({
-                id: candidate._id,
-                email: candidate.email,
-                skills: candidate.skills,
-                needs: candidate.needs,
+            const Users = await User.find(query) as IUser[];
+            return Users.map((User) => ({
+                id: User._id,
+                email: User.email,
+                skills: User.skills,
+                needs: User.needs,
             }));
         },
         messages: async () => {
@@ -46,47 +56,47 @@ const resolvers = {
             _parent: any,
             { email, password, skills, needs }: { email: string; password: string; skills: string[]; needs: string[] }
         ) => {
-            if (await Candidate.findOne({ email })) {
-                throw new AuthenticationError('Candidate with this email already exists.');
+            if (await User.findOne({ email })) {
+                throw new AuthenticationError('User with this email already exists.');
             }
-            const candidate = await Candidate.create({ email, password, skills, needs });
-            const { _id } = candidate.toObject();
+            const newUser = (await User.create({ email, password, skills, needs })).toObject() as unknown as IUser;
+            const { _id } = newUser;
             return {
-                token: signToken(candidate.user, email, _id.toString()),
+                token: signToken({ ...newUser, _id }, email, _id.toString()),
                 user: {
                     id: _id,
-                    email: candidate.email,
-                    skills: candidate.skills,
-                    needs: candidate.needs,
+                    email: newUser.email,
+                    skills: newUser.skills,
+                    needs: newUser.needs,
                 },
             };
         },
         login: async (_parent: any, { email, password }: { email: string; password: string }) => {
-            const candidate = await Candidate.findOne({ email });
-            if (!candidate || !(await candidate.isCorrectPassword(password))) {
-                throw new AuthenticationError('Could not authenticate candidate.');
+            const foundUser = await User.findOne({ email }) as IUser;
+            if (!foundUser || !(await foundUser.isCorrectPassword(password))) {
+                throw new AuthenticationError('Could not authenticate User.');
             }
-            const { _id } = candidate.toObject();
+            const { _id } = (foundUser as any).toObject();
             return {
-                token: signToken(candidate.user, email, _id.toString()),
+                token: signToken({ ...(foundUser as any).toObject(), _id: _id.toString() }, email, _id.toString()),
                 user: {
                     id: _id,
-                    email: candidate.email,
-                    skills: candidate.skills,
-                    needs: candidate.needs,
+                    email: User.email,
+                    skills: User.skills,
+                    needs: User.needs,
                 },
             };
         },
         sendMessage: async (_parent: any, { toUserId, content }: { toUserId: string; content: string }, context: any) => {
-            if (!context.candidate) throw new AuthenticationError('You need to be logged in!');
+            if (!context.User) throw new AuthenticationError('You need to be logged in!');
             // Placeholder for sendMessage resolver
             return {
                 id: 'message-id',
                 from: {
-                    id: context.candidate._id,
-                    email: context.candidate.email,
-                    skills: context.candidate.skills,
-                    needs: context.candidate.needs,
+                    id: context.User._id,
+                    email: context.User.email,
+                    skills: context.User.skills,
+                    needs: context.User.needs,
                 },
                 to: {
                     id: toUserId,
@@ -99,15 +109,15 @@ const resolvers = {
             };
         },
         requestSession: async (_parent: any, { toUserId, time }: { toUserId: string; time: Date }, context: any) => {
-            if (!context.candidate) throw new AuthenticationError('You need to be logged in!');
+            if (!context.User) throw new AuthenticationError('You need to be logged in!');
             // Placeholder for requestSession resolver
             return {
                 id: 'session-request-id',
                 from: {
-                    id: context.candidate._id,
-                    email: context.candidate.email,
-                    skills: context.candidate.skills,
-                    needs: context.candidate.needs,
+                    id: context.User._id,
+                    email: context.User.email,
+                    skills: context.User.skills,
+                    needs: context.User.needs,
                 },
                 to: {
                     id: toUserId,
@@ -124,7 +134,7 @@ const resolvers = {
             { requestId, accept }: { requestId: string; accept: boolean },
             context: any
         ) => {
-            if (!context.candidate) throw new AuthenticationError('You need to be logged in!');
+            if (!context.User) throw new AuthenticationError('You need to be logged in!');
             // Placeholder for respondToSession resolver
             return {
                 id: requestId,
@@ -135,10 +145,10 @@ const resolvers = {
                     needs: [],
                 },
                 to: {
-                    id: context.candidate._id,
-                    email: context.candidate.email,
-                    skills: context.candidate.skills,
-                    needs: context.candidate.needs,
+                    id: context.User._id,
+                    email: context.User.email,
+                    skills: context.User.skills,
+                    needs: context.User.needs,
                 },
                 time: new Date(),
                 status: accept ? 'ACCEPTED' : 'DECLINED',

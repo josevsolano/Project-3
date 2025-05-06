@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const sessionSchema = new mongoose.Schema({
+const sessionRequestSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -61,5 +61,5 @@ export interface ISession extends Document {
   createdAt: Date;
 }
 
-const Session = mongoose.model('Session', sessionSchema);
+const Session = mongoose.model('Session', sessionRequestSchema);
 export default Session;
