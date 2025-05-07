@@ -1,16 +1,14 @@
-// server/tsconfig.json
 {
   "compilerOptions": {
-    "target": "ES2020",                // or whatever your Node version supports
-    "module": "commonjs",              
-    "rootDir": "src",                  // where your .ts lives
-    "outDir": "dist",                  // where compiled .js will go
-    "strict": true,                    
-    "esModuleInterop": true,           
-    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "strict": true,
+    "rootDir": "src",
+    "outDir": "dist",
     "skipLibCheck": true,
-    "sourceMap": true                  
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"]
 }
