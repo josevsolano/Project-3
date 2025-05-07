@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import './styles/globals.css';
+
 
 import App from './App';
 import { AuthProvider } from './hooks/useAuth';
-import { client } from './graphql/client';
+import client from './graphql/client';
 
 import './app.css';
 

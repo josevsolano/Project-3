@@ -1,3 +1,4 @@
+
 *,
 *::before,
 *::after {
@@ -10,14 +11,6 @@ p, ul, ol, figure,
 blockquote, dl, dd {
   margin: 0;
   padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  background-color: #f8f9fa;
-  color: #212529;
 }
 
 ul,
@@ -66,4 +59,25 @@ textarea {
 
 .hidden {
   display: none !important;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #212529;
+
+  background: linear-gradient(
+    to bottom right,
+    #FFB6C1 0%,
+    #ADD8E6 100%
+  );
+  background-attachment: fixed;
 }
