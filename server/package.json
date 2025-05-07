@@ -3,7 +3,12 @@
     "version": "1.0.0",
     "description": "Backend server for the Tutor Trader project.",
     "main": "index.js",
-    "type": "commonjs",
+    "type": "module",
+    "overrides": {
+        "@apollo/server": {
+            "@types/express": "4.17.21"
+        }
+    },
     "scripts": {
         "dev": "nodemon index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,16 +24,21 @@
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
         "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.1",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.15.14",
-        "express": "^4.19.2",
+        "express": "^4.21.2",
         "graphql": "^16.11.0",
         "jsonwebtoken": "^9.0.2",
+        "ts-node": "^10.9.2",
         "typescript": "^5.8.3"
     },
     "dependencies": {
+        "@apollo/client": "^3.13.8",
         "@apollo/server": "^4.12.0",
         "bcrypt": "^5.1.1",
+        "body-parser": "^2.2.0",
+        "cors": "^2.8.5",
         "dotenv": "^16.5.0",
         "mongoose": "^8.14.1"
     }
