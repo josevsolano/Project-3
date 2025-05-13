@@ -3,21 +3,31 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "cd server && npm install && npm start",
+    "install": "cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"cd server && npm run dev\" \"webpack serve --mode development\"",
+    "build": "concurrently \"cd server && npm run build\" \"webpack --mode production\"",
+    "start": "cd server && npm start",
     "start:dev": "concurrently \"cd server && npm run watch\" \"wait-on tcp:3001 && cd client && npm run dev\"",
     "server": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
-    "install": "cd server && npm i && cd ../client && npm i",
     "client:build": "cd client && npm run build",
     "client:dev": "cd client && npm run dev",
     "seed": "cd server && npm run seed",
-    "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\"",
     "render-build": "npm install && npm run build"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "@types/jsonwebtoken": "^9.0.9"
   },
   "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "ts-loader": "^9.4.4",
+    "style-loader": "^3.3.3",
+    "css-loader": "^6.8.1",
     "wait-on": "^7.2.0"
   }
 }
