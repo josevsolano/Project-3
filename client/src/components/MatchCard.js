@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import '../styles/card.css';
+const MatchCard = ({ match, onAdd, onRemove, }) => (_jsxs("div", { className: "card", children: [_jsx("h2", { className: "card-name", children: match.name }), _jsxs("p", { className: "card-email", children: [_jsx("strong", { children: "Email:" }), " ", match.email] }), _jsx("p", { className: "card-description", children: match.description }), _jsxs("div", { className: "card-tags", children: [_jsx("strong", { children: "Strengths:" }), " ", match.strengths.join(', ')] }), _jsxs("div", { className: "card-tags", children: [_jsx("strong", { children: "Needs:" }), " ", match.needs.join(', ')] }), _jsx("button", { onClick: onAdd, children: "Add" }), _jsx("button", { onClick: onRemove, children: "Remove" })] }));
+export default MatchCard;
+//# sourceMappingURL=MatchCard.js.map

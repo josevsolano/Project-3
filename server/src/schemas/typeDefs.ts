@@ -52,8 +52,8 @@ export const typeDefs = `
     signup(
       email: String!
       password: String!
-      skills: [String!]!
-      needs: [String!]!
+      skills: [String!]
+      needs: [String!]
     ): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
     sendMessage(toUserId: ID!, content: String!): Message!

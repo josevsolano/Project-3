@@ -1,5 +1,6 @@
+// client/src/App.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import LandingPage   from './pages/LandingPage';
 import SignupPage    from './pages/SignupPage';
@@ -10,11 +11,17 @@ import ContactPage   from './pages/ContactPage';
 export default function App() {
   return (
     <Routes>
-      <Route path="/"            element={<LandingPage />} />
-      <Route path="/signup"      element={<SignupPage />} />
-      <Route path="/filter"      element={<FilterPage />} />
+      {/* 1. Your “home” landing page */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* 2. Other top‐level routes */}
+      <Route path="/signup"       element={<SignupPage    />} />
+      <Route path="/filter"       element={<FilterPage    />} />
       <Route path="/candidate/:id" element={<CandidatePage />} />
-      <Route path="/contact"     element={<ContactPage />} />
+      <Route path="/contact"      element={<ContactPage   />} />
+
+      {/* 3. Fallback: any unknown URL → redirect back to “/” */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
